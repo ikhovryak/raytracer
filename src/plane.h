@@ -12,8 +12,19 @@ public:
 
    virtual bool hit(const ray& r, hit_record& rec) const override
    {
-      // todo
-      return false;
+
+
+       vec3 norm_r = normalize(r.direction());
+       float r_dot_n = dot(norm_r, n);
+       if (r_dot_n == 0) return false;
+       float t = dot(a - r.origin(), n) / dot(norm_r, n);
+
+       rec.t = t;
+       rec.p = r.at(t);
+       rec.mat_ptr = mat_ptr;
+
+       rec.set_face_normal(r, n);
+       return true;
    }
 
 public:

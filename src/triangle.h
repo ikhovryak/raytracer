@@ -13,7 +13,7 @@ public:
 
    virtual bool hit(const ray& r, hit_record& rec) const override
    {
-      // todo
+       vec3 e1 = b - a;
       return false;
    }
 

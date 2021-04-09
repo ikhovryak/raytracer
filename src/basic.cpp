@@ -13,6 +13,9 @@ using namespace glm;
 using namespace agl;
 using namespace std;
 
+
+
+
 color ray_color(const ray& r, const hittable_list& world, int depth)
 {
    hit_record rec;

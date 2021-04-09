@@ -5,6 +5,10 @@
 #include "hittable.h"
 #include "AGLM.h"
 
+using namespace glm;
+//using namespace agl;
+using namespace std;
+
 class sphere : public hittable {
 public:
    sphere() : radius(0), center(0), mat_ptr(0) {}
@@ -19,6 +23,7 @@ public:
    std::shared_ptr<material> mat_ptr;
 };
 
+/*
 bool sphere::hit(const ray& r, hit_record& rec) const {
    glm::vec3 oc = r.origin() - center;
    float a = glm::dot(r.direction(), r.direction());
@@ -43,6 +48,44 @@ bool sphere::hit(const ray& r, hit_record& rec) const {
    rec.set_face_normal(r, outward_normal);
 
    return true;
+}
+*/
+bool sphere::hit(const ray& r, hit_record& rec) const {
+
+    glm::vec3 el = center - r.origin();
+    float ray_len = length(r.direction());
+    glm::vec3 d = r.direction() / ray_len;
+
+    float s = glm::dot(el, d);
+    float elSqr = glm::dot(el, el);
+    float rSqr = radius * radius;
+    if (s<0 && elSqr>rSqr) {
+        return false; //return -1, save hit_record?
+    }
+
+    float mSqr = elSqr - s * s;
+    if (mSqr > rSqr) {
+        return false; //return -1, save hit_record?
+    }
+
+    float t;
+    float q = sqrt(rSqr - mSqr);
+    if (elSqr > rSqr) {
+        t = s - q;
+    }
+    else {
+        t = s + q;
+    }
+    t = t / ray_len;
+    rec.t = t; // save the time when we hit the object
+    rec.p = r.at(t); // ray.origin + t * ray.direction
+    rec.mat_ptr = mat_ptr;
+
+    // save normal
+    glm::vec3 outward_normal = normalize(rec.p - center); // compute unit length normal
+    rec.set_face_normal(r, outward_normal);
+    return true; // return t/len
+
 }
 
 #endif
