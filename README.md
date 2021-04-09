@@ -46,4 +46,7 @@ To run each program from build, you would type
 raytracer/build $ ../bin/gradient
 raytracer/build $ ../bin/normals
 ```
-
+![Basic](images/basic.png)
+![Some materials](images/materials.png)
+![Some materials](images/myspace1.png)
+.. to be continued
