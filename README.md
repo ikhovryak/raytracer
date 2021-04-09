@@ -1,6 +1,12 @@
 # raytracer
 
 Implements a raytracer based on the book [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html). 
+- matte objects
+- metals
+- dielectric 
+- lambertian shading 
+
+![Combined functions](images/myspace.png)
 
 ## How to build
 
