@@ -65,9 +65,14 @@ void ray_trace(ppm_image& image)
    // World
    shared_ptr<material> gray = make_shared<lambertian>(color(0.5f));
 
+
+
    hittable_list world;
    world.add(make_shared<sphere>(point3(0, 0, -1), 0.5f, gray));
    world.add(make_shared<sphere>(point3(0, -100.5, -1), 100, gray));
+   shared_ptr<material> metalRed = make_shared<metal>(color(1, 0, 0), 0.3f);
+   shared_ptr<material> glass = make_shared<dielectric>(1.5f);
+
 
    // Camera
    vec3 camera_pos(0);

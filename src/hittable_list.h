@@ -19,6 +19,7 @@ public:
 
    void clear() { objects.clear(); }
    void add(shared_ptr<hittable> object) { objects.push_back(object); }
+   void clear(shared_ptr<hittable> object) { objects.clear(); }
 
    virtual bool hit(const ray& r, float min_t, float max_t, hit_record& rec) const;
 

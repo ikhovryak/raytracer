@@ -48,6 +48,7 @@ namespace agl
         // Set a color with components in range [0, 1]
         void set_vec3(int row, int col, const glm::vec3& color);
 
+        ppm_image lightest(const ppm_image& other, float alpha) const;
         // Get a vec3 color 
         glm::vec3 get_vec3(int row, int col) const;
 

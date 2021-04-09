@@ -68,8 +68,16 @@ public:
         glm::color& attenuation, ray& scattered) const override
     {
         // todo
-        attenuation = glm::color(0);
-        return false;
+        // attenuation = glm::color(0);
+        vec3 scatter_direction = hit.normal + random_unit_vector();
+        if (near_zero(scatter_direction))
+        {
+            scatter_direction = hit.normal;
+        }
+        scattered = ray(hit.p, scatter_direction);
+        attenuation = diffuseColor;
+        return true;
+        //return false;
     }
 
 public:

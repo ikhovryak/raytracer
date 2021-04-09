@@ -166,4 +166,12 @@ int main(int argc, char** argv)
        none);
    cout << "plane 4 passed \n";
 
+   plane p(point3(0), vec3(0, 0, 1), empty);
+
+   test_plane(p,
+       ray(point3(0, 0, 15), vec3(0, 0, 3)), // ray off/away plane
+       false,
+       none);
+
+   cout << "plane 5 passed \n";
 }

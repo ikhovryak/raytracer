@@ -79,3 +79,26 @@ void ppm_image::set_vec3(int i, int j, const vec3 & c)
    myData[idx].g = (unsigned char) (c[1] * 255.999);
    myData[idx].b = (unsigned char) (c[2] * 255.999);
 }
+
+
+ppm_image ppm_image::lightest(const ppm_image& other, float alpha) const
+{
+    // Only works for images of the same size
+    ppm_image result(myWidth, myHeight);
+
+    for (int i = 0; i < myHeight; i++)
+    {
+        for (int j = 0; j < myWidth; j++)
+        {
+            vec3 myV = result.get_vec3(i, j);
+            vec3 otherV = other.get_vec3(i, j);
+            unsigned char r =  glm::max(alpha/255, glm::max( myV.r, otherV.r));
+            unsigned char g = glm::max(alpha/255, glm::max(myV.g, otherV.g));
+            unsigned char b = glm::max(alpha/255, glm::max(myV.b, otherV.b));
+            vec3 new_color = vec3(r, g, b);
+            result.set_vec3(i, j, new_color);
+        }
+    }
+
+    return result;
+}

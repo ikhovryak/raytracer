@@ -17,14 +17,20 @@ public:
        vec3 norm_r = normalize(r.direction());
        float r_dot_n = dot(norm_r, n);
        if (r_dot_n == 0) return false;
-       float t = dot(a - r.origin(), n) / dot(norm_r, n);
+       float t = dot(a - r.origin(), n) / r_dot_n;
 
-       rec.t = t;
-       rec.p = r.at(t);
-       rec.mat_ptr = mat_ptr;
+       if (t >= 0)
+       {
+           rec.t = t;
+           rec.p = r.at(t);
+           rec.mat_ptr = mat_ptr;
 
-       rec.set_face_normal(r, n);
-       return true;
+           rec.set_face_normal(r, n);
+           return true;
+       }
+       else {
+           return false;
+       }
    }
 
 public:
