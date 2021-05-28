@@ -13,6 +13,12 @@ using namespace glm;
 using namespace agl;
 using namespace std;
 
+color air_shade;
+
+void set_air_shade(vec3 shade) {
+    air_shade = shade;
+}
+
 color ray_color(const ray& r, const hittable_list& world, int depth)
 {
    hit_record rec;
@@ -34,7 +40,7 @@ color ray_color(const ray& r, const hittable_list& world, int depth)
    }
    vec3 unit_direction = normalize(r.direction());
    auto t = 0.5f * (unit_direction.y + 1.0f);
-   return (1.0f - t) * color(1, 1, 1) + t * color(0.5f, 0.7f, 1.0f);
+   return (1.0f - t) * color(1, 1, 1) + t * air_shade;
 }
 
 color normalize_color(const color& c, int samples_per_pixel)
@@ -53,6 +59,15 @@ color normalize_color(const color& c, int samples_per_pixel)
    return color(r, g, b);
 }
 
+
+float rand_fl(float a, float b) {
+    float random = ((float)rand()) / (float)RAND_MAX;
+    float diff = b - a;
+    float r = random * diff;
+    return a + r;
+}
+
+
 void ray_trace(ppm_image& image)
 {
    // Image
@@ -62,42 +77,69 @@ void ray_trace(ppm_image& image)
    int samples_per_pixel = 10; // higher => more anti-aliasing
    int max_depth = 10; // higher => less shadow acne
 
-   // World
-   shared_ptr<material> gray = make_shared<lambertian>(color(0.5f));
+   // Camera
+   vec3 camera_pos(0, 0, 6);
+   float viewport_height = 2.0f;
+   float focal_length = 4.0;
+   camera cam(camera_pos, viewport_height, aspect, focal_length);
 
+   // World
+   shared_ptr<material> gray = make_shared<lambertian>(color(0.7f));
+   shared_ptr<material> matteGreen = make_shared<lambertian>(color(0, 0.5f, 0));
+   shared_ptr<material> planet = make_shared<metal>(color(0.74f, 0.1f, 0.38f), 0.3f);
+   shared_ptr<material> metalRed = make_shared<metal>(color(1, 0, 0), 0.3f);
+   shared_ptr<material> glass = make_shared<dielectric>(1.5f);
+   shared_ptr<material> phongDefault = make_shared<phong>(camera_pos);
 
 
    hittable_list world;
-   world.add(make_shared<sphere>(point3(0, 0, -1), 0.5f, gray));
-   world.add(make_shared<sphere>(point3(0, -100.5, -1), 100, gray));
-   shared_ptr<material> metalRed = make_shared<metal>(color(1, 0, 0), 0.3f);
-   shared_ptr<material> glass = make_shared<dielectric>(1.5f);
+
+   shared_ptr<material> space_purple = make_shared<metal>(color(0.01f, 0.01f, 0.02f), 0.3f);
+
+   world.add(make_shared<sphere>(point3(0, -100.5, -1), 100, space_purple));
 
 
-   // Camera
-   vec3 camera_pos(0);
-   float viewport_height = 2.0f;
-   float focal_length = 1.0;
-   camera cam(camera_pos, viewport_height, aspect, focal_length);
 
-   // Ray trace
-   for (int j = 0; j < height; j++)
-   {
-      for (int i = 0; i < width; i++)
-      {
-         color c(0, 0, 0);
-         for (int s = 0; s < samples_per_pixel; s++) // antialias
-         {
-            float u = float(i + random_float()) / (width - 1);
-            float v = float(height - j - 1 - random_float()) / (height - 1);
-
-            ray r = cam.get_ray(u, v);
-            c += ray_color(r, world, max_depth);
-         }
-         c = normalize_color(c, samples_per_pixel);
-         image.set_vec3(j, i, c);
-      }
+   // add planet spheres
+   for (int i = -3.5; i <= 3.5; i += 1.5) {
+       for (int j = -0.5; j <= 2.5; j += 1.25) {
+           for (int k = 0; k <= 5; k += 1.75) {
+               color new_col = color(rand_fl(0.0f, 1.0f), rand_fl(0.0f, 0.5f), rand_fl(0.0f, 1.0f));
+               world.add(make_shared<sphere>(point3(i, j, k), rand_fl(0.05f, 0.2f), make_shared<metal>(new_col, 0.3f)));
+           }
+       }
    }
 
-   image.save("raytracer.png");
+   // add spheres and raytrace them
+   for (int i = -2.5; i <= 2.5; i += 1.75) {
+       for (int j = 0.5; j <= 3.5; j += 1.5) {
+           for (int k = 0.25; k < 2.5; k += 1.25) {
+               color new_col = color(1, 1, 1);
+               world.add(make_shared<sphere>(point3(i, j, k), rand_fl(0.005f, 0.05f), make_shared<lambertian>(new_col)));
+           }
+       }
+   }
+
+   // Ray trace spheres
+   for (int j = 0; j < height; j++)
+   {
+       for (int i = 0; i < width; i++)
+       {
+           color c(0, 0, 0);
+           for (int s = 0; s < samples_per_pixel; s++) // antialias
+           {
+               float u = float(i + random_float()) / (width - 1);
+               float v = float(height - j - 1 - random_float()) / (height - 1);
+
+               ray r = cam.get_ray(u, v);
+               c += ray_color(r, world, max_depth);
+           }
+           c = normalize_color(c, samples_per_pixel);
+           image.set_vec3(j, i, c);
+       }
+   }
+
+   image.save("myspace.png");
+
+
 }

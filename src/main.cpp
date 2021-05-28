@@ -7,6 +7,7 @@
 #include <iostream>
 
 extern void ray_trace(agl::ppm_image& image);
+extern void set_air_shade(glm::vec3 shade);
 
 const GLchar* vertexShader[] =
 {
@@ -132,6 +133,10 @@ int main(int argc, char** argv)
         -1.0f,  1.0f, 0.0f
     };
 
+    /*glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glClearColor(0, 0, 0, 1);*/
+
     GLuint vboId;
     glGenBuffers(1, &vboId);
     glBindBuffer(GL_ARRAY_BUFFER, vboId);
@@ -145,6 +150,7 @@ int main(int argc, char** argv)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte*)NULL);
 
     agl::ppm_image image(width, height);
+    set_air_shade(glm::vec3(0.2f, 0.016f, 0.369f));
     ray_trace(image);
     std::cout << "Loaded image: " << image.width() << "x" << image.height() << std::endl;
 

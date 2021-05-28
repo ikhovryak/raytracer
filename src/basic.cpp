@@ -14,7 +14,12 @@ using namespace agl;
 using namespace std;
 
 
+color air_shade = color(0.5f, 0.7f, 1.0f);
 
+void set_air_shade(vec3 shade) {
+    air_shade = shade;
+    cout << air_shade<<endl;
+}
 
 color ray_color(const ray& r, const hittable_list& world, int depth)
 {

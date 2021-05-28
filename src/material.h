@@ -67,17 +67,24 @@ public:
     virtual bool scatter(const ray& r_in, const hit_record& hit,
         glm::color& attenuation, ray& scattered) const override
     {
-        // todo
-        // attenuation = glm::color(0);
-        vec3 scatter_direction = hit.normal + random_unit_vector();
-        if (near_zero(scatter_direction))
-        {
-            scatter_direction = hit.normal;
-        }
-        scattered = ray(hit.p, scatter_direction);
-        attenuation = diffuseColor;
-        return true;
-        //return false;
+        // calc diffuse using lambertian v1
+        glm::vec3 unitn = normalize(hit.normal);
+        glm::vec3 lightDir = normalize(lightPos - hit.p);
+        glm::color diffuse = kd * max(vec3(0), dot(unitn, lightDir)) * diffuseColor;
+
+        //calc ambient
+        glm::color ambient = ka * ambientColor;
+
+        // calc specular
+        glm::vec3 unitr = normalize(2 * dot(lightDir, unitn) * unitn - lightDir);
+        glm::vec3 unitv = normalize(viewPos - hit.p);
+        float helper = std::max(0.0f, dot(unitv, unitr));
+        glm::color specular = ks * specColor * pow(helper, shininess);
+
+        glm::color final = ambient + diffuse + specular;
+
+        attenuation = final;
+        return false;
     }
 
 public:
