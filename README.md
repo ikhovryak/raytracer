@@ -1,6 +1,12 @@
 # raytracer
 
 Implements a raytracer based on the book [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html). 
+- matte objects
+- metals
+- dielectric 
+- lambertian shading 
+
+![Combined functions](images/myspace.png)
 
 ## How to build
 
@@ -40,4 +46,8 @@ To run each program from build, you would type
 raytracer/build $ ../bin/gradient
 raytracer/build $ ../bin/normals
 ```
+![Basic](images/basic.png)
+![Some materials](images/materials.png)
+![Some materials](images/myspace1.png)
 
+.. to be continued
