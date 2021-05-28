@@ -60,6 +60,7 @@ raytracer/build $ ../bin/normals
 Air color could be set and customized in ```main.cpp``` for the entire scene.
 
 Before:
+
 ![Basic](images/basic.png)
 
 After:
